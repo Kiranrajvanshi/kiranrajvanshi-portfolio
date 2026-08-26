@@ -26,7 +26,7 @@ export const Contact: React.FC = () => {
       formData.append('subject', formState.subject);
       formData.append('message', formState.message);
 
-      const response = await fetch('/', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: formData.toString()

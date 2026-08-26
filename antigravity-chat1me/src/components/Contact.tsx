@@ -186,7 +186,8 @@ export const Contact: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" className="space-y-4">
+                  <input type="hidden" name="bot-field" />
                   <input type="hidden" name="form-name" value="contact" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -195,6 +196,7 @@ export const Contact: React.FC = () => {
                       </label>
                       <input
                         type="text"
+                        name="name"
                         required
                         value={formState.name}
                         onChange={(e) => setFormState({ ...formState, name: e.target.value })}
@@ -209,6 +211,7 @@ export const Contact: React.FC = () => {
                       </label>
                       <input
                         type="email"
+                        name="email"
                         required
                         value={formState.email}
                         onChange={(e) => setFormState({ ...formState, email: e.target.value })}
@@ -224,6 +227,7 @@ export const Contact: React.FC = () => {
                     </label>
                     <input
                       type="text"
+                      name="subject"
                       required
                       value={formState.subject}
                       onChange={(e) => setFormState({ ...formState, subject: e.target.value })}
@@ -237,6 +241,7 @@ export const Contact: React.FC = () => {
                       Message
                     </label>
                     <textarea
+                      name="message"
                       rows={4}
                       required
                       value={formState.message}

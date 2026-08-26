@@ -19,7 +19,7 @@ export const PERSONAL_INFO = {
   socials: {
     github: "https://github.com/",
     linkedin: "https://linkedin.com/in/",
-    email: "kiran.rajvanshi.dev@gmail.com"
+    email: "kiranrajvanshi721@gmail.com"
   }
 };
 

@@ -15,18 +15,39 @@ export const Contact: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormState({ name: '', email: '', subject: '', message: '' });
-    }, 4000);
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append('form-name', 'contact');
+      formData.append('name', formState.name);
+      formData.append('email', formState.email);
+      formData.append('subject', formState.subject);
+      formData.append('message', formState.message);
+
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      });
+
+      if (!response.ok) throw new Error('Form submission failed');
+
+      setSubmitted(true);
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormState({ name: '', email: '', subject: '', message: '' });
+      }, 4000);
+    } catch (error) {
+      console.error('Contact form submission failed:', error);
+      alert('Sorry, your message could not be sent. Please try again.');
+    }
   };
 
   return (
@@ -166,6 +187,7 @@ export const Contact: React.FC = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  <input type="hidden" name="form-name" value="contact" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">

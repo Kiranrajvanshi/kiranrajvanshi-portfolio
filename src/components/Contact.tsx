@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, Send, Copy, Check, Sparkles, ArrowRight } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
-import confetti from 'canvas-confetti';
 
 export const Contact: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [sending, setSending] = useState(false);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(PERSONAL_INFO.socials.email);
@@ -16,10 +13,6 @@ export const Contact: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = () => {
-    // FormSubmit handles the POST directly; no client-side interception.
-    setSending(true);
-  };
 
   return (
     <section id="contact" className="py-24 relative overflow-hidden bg-background-secondary/70 border-t border-white/5">
@@ -42,10 +35,9 @@ export const Contact: React.FC = () => {
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="lg:col-span-7">
             <div className="glass-panel-glow p-8 rounded-3xl border border-white/15 shadow-2xl relative bg-background-secondary/90">
-              {submitted ? (
+
                 <div className="py-12 text-center space-y-4"><div className="w-16 h-16 rounded-full bg-accent-emerald/20 border border-accent-emerald/40 flex items-center justify-center mx-auto text-accent-emerald"><Check className="w-8 h-8" /></div><h3 className="text-2xl font-display font-bold text-white">Message Sent!</h3><p className="text-slate-300 text-sm max-w-sm mx-auto">Thanks for reaching out. Your message has been sent to my email.</p></div>
-              ) : (
-                <form onSubmit={handleSubmit} name="contact" action="https://formsubmit.co/410dcda9b23480c7e90b3fde8ffebc3b" method="POST" className="space-y-4">
+              <form name="contact" action="https://formsubmit.co/410dcda9b23480c7e90b3fde8ffebc3b" method="POST" className="space-y-4">
                   <input type="hidden" name="_captcha" value="false" />
                   <input type="hidden" name="_template" value="table" />
                   <input type="hidden" name="_next" value="https://kiranrajvanshi-portfolio.vercel.app/#contact" />
@@ -56,9 +48,8 @@ export const Contact: React.FC = () => {
                   </div>
                   <div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Subject / Project Scope</label><input type="text" name="subject" required value={formState.subject} onChange={(e) => setFormState({ ...formState, subject: e.target.value })} placeholder="WordPress customization / Web App / AI Workflow" className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors" /></div>
                   <div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Message</label><textarea name="message" rows={4} required value={formState.message} onChange={(e) => setFormState({ ...formState, message: e.target.value })} placeholder="Tell me a bit about the requirements, goals, or timeline..." className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors resize-none" /></div>
-                  <button type="submit" disabled={sending} className="w-full py-4 rounded-xl font-semibold text-sm text-slate-950 bg-gradient-to-r from-accent-cyan via-white to-accent-cyan hover:opacity-95 active:scale-[0.99] transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-wait"><span>{sending ? 'Sending...' : 'Send Message'}</span><Send className="w-4 h-4" /></button>
+                  <button type="submit" className="w-full py-4 rounded-xl font-semibold text-sm text-slate-950 bg-gradient-to-r from-accent-cyan via-white to-accent-cyan hover:opacity-95 active:scale-[0.99] transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-wait"><span>Send Message</span><Send className="w-4 h-4" /></button>
                 </form>
-              )}
             </div>
           </motion.div>
         </div>

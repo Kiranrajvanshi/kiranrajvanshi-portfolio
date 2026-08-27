@@ -22,25 +22,17 @@ export const Contact: React.FC = () => {
     setSending(true);
 
     try {
-      const formData = new URLSearchParams();
-      formData.append('name', formState.name);
-      formData.append('email', formState.email);
-      formData.append('subject', formState.subject);
-      formData.append('message', formState.message);
-      formData.append('_replyto', formState.email);
-      formData.append('_subject', `Portfolio Contact: ${formState.subject}`);
-      formData.append('_captcha', 'false');
-      formData.append('_template', 'table');
-
+      const form = e.currentTarget as HTMLFormElement;
+      const formData = new FormData(form);
       const response = await fetch('https://formsubmit.co/ajax/kiranrajvanshi721@gmail.com', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-        body: formData.toString(),
+        headers: { Accept: 'application/json' },
+        body: formData,
       });
-      const result = await response.json().catch(() => ({}));
 
-      if (!response.ok || result.success === false || result.success === 'false') {
-        throw new Error(result.message || 'Form submission failed');
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result || result.success !== 'true') {
+        throw new Error(result?.message || 'Form submission failed');
       }
 
       setSubmitted(true);
@@ -82,6 +74,9 @@ export const Contact: React.FC = () => {
                 <div className="py-12 text-center space-y-4"><div className="w-16 h-16 rounded-full bg-accent-emerald/20 border border-accent-emerald/40 flex items-center justify-center mx-auto text-accent-emerald"><Check className="w-8 h-8" /></div><h3 className="text-2xl font-display font-bold text-white">Message Prepared!</h3><p className="text-slate-300 text-sm max-w-sm mx-auto">Thanks for reaching out. Your message has been sent to my email.</p></div>
               ) : (
                 <form onSubmit={handleSubmit} name="contact" className="space-y-4">
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_subject" value={`Portfolio Contact: ${formState.subject}`} />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Your Name</label><input type="text" name="name" required value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} placeholder="Alex Parker" className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors" /></div><div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Your Email</label><input type="email" name="email" required value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} placeholder="alex@company.com" className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors" /></div></div>
                   <div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Subject / Project Scope</label><input type="text" name="subject" required value={formState.subject} onChange={(e) => setFormState({ ...formState, subject: e.target.value })} placeholder="WordPress customization / Web App / AI Workflow" className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors" /></div>
                   <div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Message</label><textarea name="message" rows={4} required value={formState.message} onChange={(e) => setFormState({ ...formState, message: e.target.value })} placeholder="Tell me a bit about the requirements, goals, or timeline..." className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors resize-none" /></div>

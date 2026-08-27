@@ -16,37 +16,27 @@ export const Contact: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (sending) return;
+
+    const form = e.currentTarget;
     setSending(true);
 
-    try {
-      const form = e.currentTarget as HTMLFormElement;
-      const formData = new FormData(form);
-      const response = await fetch('https://formsubmit.co/ajax/kiranrajvanshi721@gmail.com', {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: formData,
-      });
+    form.action = 'https://formsubmit.co/kiranrajvanshi721@gmail.com';
+    form.method = 'POST';
+    form.target = 'contact-submit-frame';
 
-      const result = await response.json().catch(() => null);
-      if (!response.ok || !result || result.success !== 'true') {
-        throw new Error(result?.message || 'Form submission failed');
-      }
+    const submit = HTMLFormElement.prototype.submit;
+    submit.call(form);
 
-      setSubmitted(true);
-      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-      setTimeout(() => {
-        setSubmitted(false);
-        setFormState({ name: '', email: '', subject: '', message: '' });
-      }, 4000);
-    } catch (error) {
-      console.error('Contact form submission failed:', error);
-      alert('Sorry, your message could not be sent. Please try again.');
-    } finally {
+    setSubmitted(true);
+    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+    setTimeout(() => {
+      setSubmitted(false);
       setSending(false);
-    }
+      setFormState({ name: '', email: '', subject: '', message: '' });
+    }, 4000);
   };
 
   return (
@@ -73,8 +63,10 @@ export const Contact: React.FC = () => {
               {submitted ? (
                 <div className="py-12 text-center space-y-4"><div className="w-16 h-16 rounded-full bg-accent-emerald/20 border border-accent-emerald/40 flex items-center justify-center mx-auto text-accent-emerald"><Check className="w-8 h-8" /></div><h3 className="text-2xl font-display font-bold text-white">Message Prepared!</h3><p className="text-slate-300 text-sm max-w-sm mx-auto">Thanks for reaching out. Your message has been sent to my email.</p></div>
               ) : (
-                <form onSubmit={handleSubmit} name="contact" className="space-y-4">
+                <form onSubmit={handleSubmit} name="contact" action="https://formsubmit.co/kiranrajvanshi721@gmail.com" method="POST" target="contact-submit-frame" className="space-y-4">
                 <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_subject" value={`Portfolio Contact: ${formState.subject}`} />
                 <input type="hidden" name="_template" value="table" />
                 <input type="hidden" name="_subject" value={`Portfolio Contact: ${formState.subject}`} />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Your Name</label><input type="text" name="name" required value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} placeholder="Alex Parker" className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors" /></div><div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Your Email</label><input type="email" name="email" required value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} placeholder="alex@company.com" className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors" /></div></div>
@@ -82,6 +74,7 @@ export const Contact: React.FC = () => {
                   <div><label className="block text-xs font-mono text-slate-300 uppercase mb-1.5">Message</label><textarea name="message" rows={4} required value={formState.message} onChange={(e) => setFormState({ ...formState, message: e.target.value })} placeholder="Tell me a bit about the requirements, goals, or timeline..." className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan placeholder:text-slate-600 transition-colors resize-none" /></div>
                   <button type="submit" disabled={sending} className="w-full py-4 rounded-xl font-semibold text-sm text-slate-950 bg-gradient-to-r from-accent-cyan via-white to-accent-cyan hover:opacity-95 active:scale-[0.99] transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-wait"><span>{sending ? 'Sending...' : 'Send Message'}</span><Send className="w-4 h-4" /></button>
                 </form>
+                <iframe name="contact-submit-frame" title="Contact form submission" className="hidden" />
               )}
             </div>
           </motion.div>
